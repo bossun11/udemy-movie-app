@@ -1,7 +1,20 @@
 import AppLayout from '@/components/Layouts/AppLayout'
+import axios from 'axios'
 import Head from 'next/head'
+import { useEffect } from 'react'
 
 const Dashboard = () => {
+    useEffect(() => {
+        const fetchPopularMovies = async () => {
+            try {
+                const response = await axios.get('api/getPopularMovies')
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        fetchPopularMovies()
+    }, [])
+
     return (
         <AppLayout
             header={
