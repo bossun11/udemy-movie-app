@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const search = () => {
+    const [results, setResults] = useState([])
     const router = useRouter()
     const { query: searchQuery } = router.query
 
@@ -11,7 +12,11 @@ const search = () => {
             const response = await axios.get(
                 `api/searchMedia?searchQuery=${searchQuery}`,
             )
-            console.log(response.data)
+            const searchResults = response.data.results
+            const validResults = searchResults.filter(
+                item => item.media_type === 'movie' || item.media_type === 'tv',
+            )
+            setResults(validResults)
         } catch (error) {
             console.error(error)
         }
