@@ -1,10 +1,58 @@
 import AppLayout from '@/components/Layouts/AppLayout'
-import { Box, Container, Grid, Typography } from '@mui/material'
+import larvaeAxios from '@/lib/laravelAxios'
+import {
+    Box,
+    Card,
+    CardContent,
+    Container,
+    Grid,
+    Rating,
+    Typography,
+} from '@mui/material'
 import axios from 'axios'
 import Head from 'next/head'
+import { useEffect } from 'react'
 
-const Detail = ({ detail, media_type }) => {
-    console.log(detail)
+const Detail = ({ detail, media_type, media_id }) => {
+    const review = [
+        {
+            id: 1,
+            content: 'とても面白かったです',
+            rating: 5,
+            user: {
+                name: '山田花子',
+            },
+        },
+        {
+            id: 2,
+            content: '最悪！',
+            rating: 1,
+            user: {
+                name: '田中太郎',
+            },
+        },
+        {
+            id: 3,
+            content: 'まあまあかな',
+            rating: 3,
+            user: {
+                name: '佐藤次郎',
+            },
+        },
+    ]
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await laravelAxios.get(
+                    `api/reviews/${media_type}/${media_id}`,
+                )
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        fetchReviews()
+    }, [media_type, media_id])
     return (
         <AppLayout
             header={
@@ -16,6 +64,7 @@ const Detail = ({ detail, media_type }) => {
                 <title>Laravel - Detail</title>
             </Head>
 
+            {/* 映画情報部分 */}
             <Box
                 sx={{
                     height: { xs: 'auto', md: '70vh' },
@@ -60,6 +109,43 @@ const Detail = ({ detail, media_type }) => {
                     </Grid>
                 </Container>
             </Box>
+
+            {/* レビュー内容表示 */}
+            <Container sx={{ py: 4 }}>
+                <Typography
+                    container={'h1'}
+                    variant="h4"
+                    align="center"
+                    gutterBottom>
+                    レビュー一覧
+                </Typography>
+
+                <Grid container spacing={3}>
+                    {review.map(review => (
+                        <Grid item key={review.id} xs={12}>
+                            <Card>
+                                <CardContent>
+                                    <Typography
+                                        variant="h6"
+                                        component={'div'}
+                                        gutterBottom>
+                                        {review.user.name}
+                                    </Typography>
+
+                                    <Rating value={review.rating} readOnly />
+
+                                    <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                        paragraph>
+                                        {review.content}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
         </AppLayout>
     )
 }
@@ -81,7 +167,7 @@ export async function getServerSideProps(context) {
             )
             combinedData.overview = enResponse.data.overview
         }
-        return { props: { detail: combinedData, media_type } }
+        return { props: { detail: combinedData, media_type, media_id } }
     } catch (error) {
         return { notFound: true }
     }
