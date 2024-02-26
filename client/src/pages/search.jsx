@@ -2,7 +2,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import Layout from '@/components/Layouts/Layout'
 import MediaCard from '@/components/MediaCard'
 import Sidebar from '@/components/Sidebar'
-import { Grid } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import axios from 'axios'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 const search = () => {
     const [results, setResults] = useState([])
     const [category, setCategory] = useState('all')
+    const [loading, setLoading] = useState(true)
     const router = useRouter()
     const { query: searchQuery } = router.query
 
@@ -26,6 +27,8 @@ const search = () => {
             setResults(validResults)
         } catch (error) {
             console.error(error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -50,11 +53,21 @@ const search = () => {
                 <title>Laravel - Search</title>
             </Head>
             <Layout sidebar={<Sidebar setCategory={setCategory} />}>
-                <Grid container spacing={3}>
-                    {filteredResults.map(item => (
-                        <MediaCard key={item.id} item={item} />
-                    ))}
-                </Grid>
+                {loading ? (
+                    <Grid item textAlign={'center'} xs={12}>
+                        <Typography>検索中...</Typography>
+                    </Grid>
+                ) : filteredResults.length > 0 ? (
+                    <Grid container spacing={3}>
+                        {filteredResults.map(item => (
+                            <MediaCard key={item.id} item={item} />
+                        ))}
+                    </Grid>
+                ) : (
+                    <Grid item textAlign={'center'} xs={12}>
+                        <Typography>検索結果がありません</Typography>
+                    </Grid>
+                )}
             </Layout>
         </AppLayout>
     )
