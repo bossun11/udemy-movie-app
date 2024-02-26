@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 
 const search = () => {
     const [results, setResults] = useState([])
+    const [category, setCategory] = useState('all')
     const router = useRouter()
     const { query: searchQuery } = router.query
 
@@ -32,6 +33,12 @@ const search = () => {
         if (!searchQuery) return
         fetchMedia()
     }, [searchQuery])
+
+    const filteredResults = results.filter(result => {
+        if (category === 'all') return result
+        return result.media_type === category
+    })
+
     return (
         <AppLayout
             header={
@@ -42,9 +49,11 @@ const search = () => {
             <Head>
                 <title>Laravel - Search</title>
             </Head>
-            <Layout sidebar={<Sidebar />}>
+            <Layout sidebar={<Sidebar setCategory={setCategory} />}>
                 <Grid container spacing={3}>
-                    <MediaCard />
+                    {filteredResults.map(item => (
+                        <MediaCard key={item.id} item={item} />
+                    ))}
                 </Grid>
             </Layout>
         </AppLayout>

@@ -1,6 +1,6 @@
 import { List, ListItemButton, ListItemText, Typography } from '@mui/material'
 
-const Sidebar = () => {
+const Sidebar = ({ setCategory }) => {
     return (
         <>
             <Typography bgcolor={'blue'} color={'white'} p={1}>
@@ -8,13 +8,13 @@ const Sidebar = () => {
             </Typography>
 
             <List component={'nav'}>
-                <ListItemButton>
+                <ListItemButton onClick={() => setCategory('all')}>
                     <ListItemText primary="全て" />
                 </ListItemButton>
-                <ListItemButton>
+                <ListItemButton onClick={() => setCategory('movie')}>
                     <ListItemText primary="映画" />
                 </ListItemButton>
-                <ListItemButton>
+                <ListItemButton onClick={() => setCategory('tv')}>
                     <ListItemText primary="TV" />
                 </ListItemButton>
             </List>
