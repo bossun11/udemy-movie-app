@@ -1,5 +1,5 @@
 import AppLayout from '@/components/Layouts/AppLayout'
-import larvaeAxios from '@/lib/laravelAxios'
+import laravelAxios from '@/lib/laravelAxios'
 import {
     Box,
     Button,
@@ -20,7 +20,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
 const Detail = ({ detail, media_type, media_id }) => {
-    const review = [
+    const reviews = [
         {
             id: 1,
             content: 'とても面白かったです',
@@ -47,6 +47,8 @@ const Detail = ({ detail, media_type, media_id }) => {
         },
     ]
     const [open, setOpen] = useState(false)
+    const [rating, setRating] = useState(0)
+    const [review, setReview] = useState('')
 
     const handleOpen = () => {
         setOpen(true)
@@ -54,6 +56,29 @@ const Detail = ({ detail, media_type, media_id }) => {
 
     const handleClose = () => {
         setOpen(false)
+    }
+
+    const handleReviewChange = e => {
+        setReview(e.target.value)
+    }
+
+    const handleRatingChange = (e, newValue) => {
+        setRating(newValue)
+    }
+
+    const isDisabled = !rating || !review.trim()
+
+    const handleReviewAdd = async () => {
+        try {
+            const response = await laravelAxios.post(`api/reviews`, {
+                rating,
+                content: review,
+                media_type,
+                media_id,
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     useEffect(() => {
@@ -136,7 +161,7 @@ const Detail = ({ detail, media_type, media_id }) => {
                 </Typography>
 
                 <Grid container spacing={3}>
-                    {review.map(review => (
+                    {reviews.map(review => (
                         <Grid item key={review.id} xs={12}>
                             <Card>
                                 <CardContent>
@@ -196,7 +221,11 @@ const Detail = ({ detail, media_type, media_id }) => {
                     <Typography variant="h6" component="h2">
                         レビューを書く
                     </Typography>
-                    <Rating required />
+                    <Rating
+                        required
+                        onChange={handleRatingChange}
+                        value={rating}
+                    />
                     <TextareaAutosize
                         required
                         minRows={5}
@@ -205,8 +234,12 @@ const Detail = ({ detail, media_type, media_id }) => {
                             width: '100%',
                             marginTop: '10px',
                         }}
+                        value={review}
+                        onChange={handleReviewChange}
                     />
-                    <Button variant="outlined">送信</Button>
+                    <Button variant="outlined" disabled={isDisabled}>
+                        送信
+                    </Button>
                 </Box>
             </Modal>
         </AppLayout>
