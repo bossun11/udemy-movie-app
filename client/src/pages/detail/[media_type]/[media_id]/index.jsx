@@ -2,16 +2,22 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import larvaeAxios from '@/lib/laravelAxios'
 import {
     Box,
+    Button,
     Card,
     CardContent,
     Container,
+    Fab,
     Grid,
+    Modal,
     Rating,
+    TextareaAutosize,
+    Tooltip,
     Typography,
 } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 import axios from 'axios'
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const Detail = ({ detail, media_type, media_id }) => {
     const review = [
@@ -40,6 +46,15 @@ const Detail = ({ detail, media_type, media_id }) => {
             },
         },
     ]
+    const [open, setOpen] = useState(false)
+
+    const handleOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -146,6 +161,54 @@ const Detail = ({ detail, media_type, media_id }) => {
                     ))}
                 </Grid>
             </Container>
+
+            {/* レビュー追加ボタン */}
+            <Box
+                sx={{
+                    position: 'fixed',
+                    bottom: '16px',
+                    right: '16px',
+                    zIndex: 5,
+                }}>
+                <Tooltip title="レビュー追加">
+                    <Fab
+                        style={{ background: '#1976d2', color: 'white' }}
+                        onClick={handleOpen}>
+                        <AddIcon />
+                    </Fab>
+                </Tooltip>
+            </Box>
+
+            {/* モーダルウィンドウ */}
+            <Modal open={open} onClose={handleClose}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '400px',
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                    }}>
+                    <Typography variant="h6" component="h2">
+                        レビューを書く
+                    </Typography>
+                    <Rating required />
+                    <TextareaAutosize
+                        required
+                        minRows={5}
+                        placeholder="レビュー内容"
+                        style={{
+                            width: '100%',
+                            marginTop: '10px',
+                        }}
+                    />
+                    <Button variant="outlined">送信</Button>
+                </Box>
+            </Modal>
         </AppLayout>
     )
 }
