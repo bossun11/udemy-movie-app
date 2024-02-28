@@ -20,35 +20,10 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
 const Detail = ({ detail, media_type, media_id }) => {
-    const reviews = [
-        {
-            id: 1,
-            content: 'とても面白かったです',
-            rating: 5,
-            user: {
-                name: '山田花子',
-            },
-        },
-        {
-            id: 2,
-            content: '最悪！',
-            rating: 1,
-            user: {
-                name: '田中太郎',
-            },
-        },
-        {
-            id: 3,
-            content: 'まあまあかな',
-            rating: 3,
-            user: {
-                name: '佐藤次郎',
-            },
-        },
-    ]
     const [open, setOpen] = useState(false)
     const [rating, setRating] = useState(0)
     const [review, setReview] = useState('')
+    const [reviews, setReviews] = useState([])
 
     const handleOpen = () => {
         setOpen(true)
@@ -69,6 +44,7 @@ const Detail = ({ detail, media_type, media_id }) => {
     const isDisabled = !rating || !review.trim()
 
     const handleReviewAdd = async () => {
+        handleClose()
         try {
             const response = await laravelAxios.post(`api/reviews`, {
                 rating,
@@ -76,6 +52,10 @@ const Detail = ({ detail, media_type, media_id }) => {
                 media_type,
                 media_id,
             })
+            const newReview = response.data
+            setReviews([...reviews, newReview])
+            setReview('')
+            setRating(0)
         } catch (error) {
             console.log(error)
         }
@@ -87,6 +67,7 @@ const Detail = ({ detail, media_type, media_id }) => {
                 const response = await laravelAxios.get(
                     `api/reviews/${media_type}/${media_id}`,
                 )
+                setReviews(response.data)
             } catch (error) {
                 console.error(error)
             }
@@ -237,7 +218,10 @@ const Detail = ({ detail, media_type, media_id }) => {
                         value={review}
                         onChange={handleReviewChange}
                     />
-                    <Button variant="outlined" disabled={isDisabled}>
+                    <Button
+                        variant="outlined"
+                        disabled={isDisabled}
+                        onClick={handleReviewAdd}>
                         送信
                     </Button>
                 </Box>

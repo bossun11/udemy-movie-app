@@ -48,7 +48,7 @@ class ReviewController extends Controller
             "media_id" => $validatedData["media_id"],
         ]);
 
-        $review.load("user");
+        $review->load("user");
 
         return response()->json($review);
     }
