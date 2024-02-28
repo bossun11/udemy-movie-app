@@ -15,6 +15,7 @@ import {
     Typography,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import StarIcon from '@mui/icons-material/Star'
 import axios from 'axios'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
@@ -24,6 +25,7 @@ const Detail = ({ detail, media_type, media_id }) => {
     const [rating, setRating] = useState(0)
     const [review, setReview] = useState('')
     const [reviews, setReviews] = useState([])
+    const [averageRating, setAverageRating] = useState(null)
 
     const handleOpen = () => {
         setOpen(true)
@@ -56,8 +58,22 @@ const Detail = ({ detail, media_type, media_id }) => {
             setReviews([...reviews, newReview])
             setReview('')
             setRating(0)
+
+            const updatedReviews = [...reviews, newReview]
+            updateAverageRating(updatedReviews)
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    const updateAverageRating = updateReviews => {
+        if (updateReviews.length > 0) {
+            const totalRating = updateReviews.reduce(
+                (acc, review) => acc + review.rating,
+                0,
+            )
+            const average = (totalRating / updateReviews.length).toFixed(1)
+            setAverageRating(average)
         }
     }
 
@@ -67,7 +83,9 @@ const Detail = ({ detail, media_type, media_id }) => {
                 const response = await laravelAxios.get(
                     `api/reviews/${media_type}/${media_id}`,
                 )
-                setReviews(response.data)
+                const fetchReviews = response.data
+                setReviews(fetchReviews)
+                updateAverageRating(fetchReviews)
             } catch (error) {
                 console.error(error)
             }
@@ -121,6 +139,33 @@ const Detail = ({ detail, media_type, media_id }) => {
                                 {detail.title || detail.name}
                             </Typography>
                             <Typography paragraph>{detail.overview}</Typography>
+
+                            <Box
+                                gap={2}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    mb: 2,
+                                }}>
+                                <Rating
+                                    readOnly
+                                    precision={0.5}
+                                    value={parseFloat(averageRating)}
+                                    emptyIcon={
+                                        <StarIcon style={{ color: 'white' }} />
+                                    }
+                                />
+
+                                <Typography
+                                    sx={{
+                                        ml: 1,
+                                        fontSize: '1.5rem',
+                                        fontWeight: 'bold',
+                                    }}>
+                                    {averageRating}
+                                </Typography>
+                            </Box>
+
                             <Typography variant="h6">
                                 {media_type === 'movie'
                                     ? `公開日：${detail.release_date}`
