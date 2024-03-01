@@ -29,6 +29,9 @@ const Detail = ({ detail, media_type, media_id }) => {
     const [reviews, setReviews] = useState([])
     const [averageRating, setAverageRating] = useState(null)
     const { user } = useAuth({ middleware: 'auth' })
+    const [editMode, setEditMode] = useState(null)
+    const [editedRating, setEditedRating] = useState(null)
+    const [editedContent, setEditedContent] = useState('')
 
     const handleOpen = () => {
         setOpen(true)
@@ -94,6 +97,23 @@ const Detail = ({ detail, media_type, media_id }) => {
             } catch (error) {
                 console.log(error)
             }
+        }
+    }
+
+    const handleReviewEdit = review => {
+        setEditMode(review.id)
+        setEditedRating(review.rating)
+        setEditedContent(review.content)
+    }
+
+    const handleConfirmEdit = async reviewId => {
+        try {
+            const response = await laravelAxios.put(`api/reviews/${reviewId}`, {
+                rating: editedRating,
+                content: editedContent,
+            })
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -217,33 +237,78 @@ const Detail = ({ detail, media_type, media_id }) => {
                                         gutterBottom>
                                         {review.user.name}
                                     </Typography>
+                                    {editMode === review.id ? (
+                                        // 編集ボタンを押されたレビューの見た目
+                                        <>
+                                            <Rating
+                                                value={editedRating}
+                                                onChange={(e, newValue) =>
+                                                    setEditedRating(newValue)
+                                                }
+                                            />
+                                            <TextareaAutosize
+                                                minRows={3}
+                                                style={{ width: '100%' }}
+                                                value={editedContent}
+                                                onChange={e =>
+                                                    setEditedContent(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Rating
+                                                value={review.rating}
+                                                readOnly
+                                            />
 
-                                    <Rating value={review.rating} readOnly />
+                                            <Typography
+                                                variant="body2"
+                                                color="textSecondary"
+                                                paragraph>
+                                                {review.content}
+                                            </Typography>
+                                        </>
+                                    )}
 
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        paragraph>
-                                        {review.content}
-                                    </Typography>
                                     {user?.id === review.user_id && (
                                         <Grid
                                             sx={{
                                                 display: 'flex',
                                                 justifyContent: 'flex-end',
                                             }}>
-                                            <ButtonGroup>
-                                                <Button>編集</Button>
+                                            {editMode === review.id ? (
                                                 <Button
-                                                    color="error"
                                                     onClick={() =>
-                                                        handleReviewDelete(
+                                                        handleConfirmEdit(
                                                             review.id,
                                                         )
                                                     }>
-                                                    削除
+                                                    編集確定
                                                 </Button>
-                                            </ButtonGroup>
+                                            ) : (
+                                                <ButtonGroup>
+                                                    <Button
+                                                        onClick={() =>
+                                                            handleReviewEdit(
+                                                                review,
+                                                            )
+                                                        }>
+                                                        編集
+                                                    </Button>
+                                                    <Button
+                                                        color="error"
+                                                        onClick={() =>
+                                                            handleReviewDelete(
+                                                                review.id,
+                                                            )
+                                                        }>
+                                                        削除
+                                                    </Button>
+                                                </ButtonGroup>
+                                            )}
                                         </Grid>
                                     )}
                                 </CardContent>
