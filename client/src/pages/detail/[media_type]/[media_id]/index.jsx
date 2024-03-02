@@ -49,7 +49,14 @@ const Detail = ({ detail, media_type, media_id }) => {
         setRating(newValue)
     }
 
-    const isDisabled = !rating || !review.trim()
+    const isButtonDisabled = (rating, content) => {
+        const isDisabled = !rating || !content.trim()
+        return isDisabled
+    }
+
+    const isReviewButtonDisabled = isButtonDisabled(rating, review)
+
+    const isEditButtonDisabled = isButtonDisabled(editedRating, editedContent)
 
     const handleReviewAdd = async () => {
         handleClose()
@@ -285,6 +292,9 @@ const Detail = ({ detail, media_type, media_id }) => {
                                                         handleConfirmEdit(
                                                             review.id,
                                                         )
+                                                    }
+                                                    disabled={
+                                                        isEditButtonDisabled
                                                     }>
                                                     編集確定
                                                 </Button>
@@ -370,7 +380,7 @@ const Detail = ({ detail, media_type, media_id }) => {
                     />
                     <Button
                         variant="outlined"
-                        disabled={isDisabled}
+                        disabled={isReviewButtonDisabled}
                         onClick={handleReviewAdd}>
                         送信
                     </Button>
