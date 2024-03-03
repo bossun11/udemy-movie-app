@@ -119,6 +119,18 @@ const Detail = ({ detail, media_type, media_id }) => {
                 rating: editedRating,
                 content: editedContent,
             })
+            const updatedReview = response.data
+            const updatedReviews = reviews.map(review => {
+                if (review.id === reviewId) {
+                    return {
+                        ...review,
+                        content: updatedReview.content,
+                        rating: updatedReview.rating,
+                    }
+                }
+                return review
+            })
+            setReviews(updatedReviews)
             setEditMode(null)
         } catch (error) {
             console.log(error)
