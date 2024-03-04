@@ -21,6 +21,7 @@ import axios from 'axios'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/auth'
+import Link from 'next/link'
 
 const Detail = ({ detail, media_type, media_id }) => {
     const [open, setOpen] = useState(false)
@@ -284,12 +285,15 @@ const Detail = ({ detail, media_type, media_id }) => {
                                                 readOnly
                                             />
 
-                                            <Typography
-                                                variant="body2"
-                                                color="textSecondary"
-                                                paragraph>
-                                                {review.content}
-                                            </Typography>
+                                            <Link
+                                                href={`/detail/${media_type}/${media_id}/review/${review.id}`}>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="textSecondary"
+                                                    paragraph>
+                                                    {review.content}
+                                                </Typography>
+                                            </Link>
                                         </>
                                     )}
 
