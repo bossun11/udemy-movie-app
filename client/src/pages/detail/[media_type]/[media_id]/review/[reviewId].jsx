@@ -1,7 +1,16 @@
 import CommentList from '@/components/CommentList'
 import AppLayout from '@/components/Layouts/AppLayout'
 import laravelAxios from '@/lib/laravelAxios'
-import { Card, CardContent, Container, Rating, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Container,
+    Rating,
+    TextField,
+    Typography,
+} from '@mui/material'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -11,6 +20,7 @@ const ReviewDetail = () => {
     const { reviewId } = router.query
     const [review, setReview] = useState(null)
     const [comments, setComments] = useState([])
+    const [content, setContent] = useState('')
 
     useEffect(() => {
         const fetchReviewDetail = async () => {
@@ -27,6 +37,10 @@ const ReviewDetail = () => {
         }
         fetchReviewDetail()
     }, [reviewId])
+
+    const handleContentChange = e => {
+        setContent(e.target.value)
+    }
 
     return (
         <AppLayout
@@ -66,6 +80,44 @@ const ReviewDetail = () => {
                                 </Typography>
                             </CardContent>
                         </Card>
+
+                        {/* 返信用のフォーム */}
+                        <Box
+                            component="form"
+                            noValidate
+                            autoComplete="off"
+                            p={2}
+                            sx={{
+                                mb: 2,
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                bgcolor: 'black',
+                            }}>
+                            <TextField
+                                inputProps={{ maxLength: 200 }}
+                                error={content.length > 200}
+                                helperText={
+                                    content.length > 200
+                                        ? '200文字を超えています'
+                                        : ''
+                                }
+                                fullWidth
+                                label="comment"
+                                variant="outlined"
+                                value={content}
+                                sx={{ mr: 1, flexGrow: 1 }}
+                                onChange={handleContentChange}
+                            />
+                            <Button
+                                variant="contained"
+                                type="submit"
+                                style={{
+                                    backgroundColor: '#1976d2',
+                                    color: '#fff',
+                                }}>
+                                送信
+                            </Button>
+                        </Box>
 
                         {/* コメント一覧 */}
                         <CommentList comments={comments} />
