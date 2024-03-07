@@ -51,7 +51,9 @@ const ReviewDetail = () => {
                 review_id: review.id,
                 content: trimmedContent,
             })
-            console.log(response.data)
+            const newComment = response.data
+            setComments([...comments, newComment])
+            setContent('')
         } catch (error) {
             console.log(error)
         }
