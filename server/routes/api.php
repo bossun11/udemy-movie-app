@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,6 @@ Route::post('/reviews', [ReviewController::class, 'store']);
 Route::get('/review/{review}', [ReviewController::class, 'show']);
 Route::put('/review/{review}', [ReviewController::class, 'update']);
 Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
+
+Route::Post('/comments', [CommentController::class, 'store']);
 
