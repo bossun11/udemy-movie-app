@@ -27,4 +27,5 @@ Route::put('/review/{review}', [ReviewController::class, 'update']);
 Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
 
 Route::Post('/comments', [CommentController::class, 'store']);
+Route::Delete('/comments/{comment}', [CommentController::class, 'destroy']);
 

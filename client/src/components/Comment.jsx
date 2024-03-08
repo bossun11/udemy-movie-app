@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import React from 'react'
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, onDelete }) => {
     return (
         <Card>
             <CardContent>
@@ -27,7 +27,11 @@ const Comment = ({ comment }) => {
                 <Grid container justifyContent="flex-end">
                     <ButtonGroup>
                         <Button>編集</Button>
-                        <Button color="error">削除</Button>
+                        <Button
+                            color="error"
+                            onClick={() => onDelete(comment.id)}>
+                            削除
+                        </Button>
                     </ButtonGroup>
                 </Grid>
             </CardContent>
