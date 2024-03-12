@@ -2,6 +2,7 @@ import { Grid } from '@mui/material'
 import Comment from './Comment'
 import laravelAxios from '@/lib/laravelAxios'
 import { useState } from 'react'
+import { content } from '../../tailwind.config'
 
 const CommentList = ({ comments, setComments }) => {
     const [editMode, setEditMode] = useState(null)
@@ -34,7 +35,21 @@ const CommentList = ({ comments, setComments }) => {
                     content: editedContent,
                 },
             )
+
+            const updatedComment = response.data
+
+            const updatedComments = comments.map(comment => {
+                if (comment.id === commentId) {
+                    return {
+                        ...comment,
+                        content: updatedComment.content,
+                    }
+                }
+                return comment
+            })
+
             setEditMode(false)
+            setComments(updatedComments)
         } catch (error) {
             console.log(error)
         }
