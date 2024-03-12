@@ -66,7 +66,19 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        if (Auth::id() !== $comment->user_id) {
+            return response()->json(['message' => '権限がありません'], 401);
+        }
+
+        $validatedData = $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $comment->update([
+            'content' => $validatedData['content'],
+        ]);
+
+        return response()->json($comment);
     }
 
     /**
