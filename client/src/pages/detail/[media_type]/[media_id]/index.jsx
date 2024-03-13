@@ -35,6 +35,7 @@ const Detail = ({ detail, media_type, media_id }) => {
     const [editMode, setEditMode] = useState(null)
     const [editedRating, setEditedRating] = useState(null)
     const [editedContent, setEditedContent] = useState('')
+    const [isFavorite, setIsFavorite] = useState(false)
 
     const handleOpen = () => {
         setOpen(true)
@@ -146,7 +147,7 @@ const Detail = ({ detail, media_type, media_id }) => {
                 media_type,
                 media_id,
             })
-            console.log(response.data)
+            setIsFavorite(response.data.status === 'added')
         } catch (error) {
             console.error(error)
         }
@@ -216,10 +217,11 @@ const Detail = ({ detail, media_type, media_id }) => {
 
                             <IconButton
                                 style={{
-                                    color: 'white',
+                                    color: isFavorite ? 'red' : 'white',
                                     background: '#0d253f',
-                                }}>
-                                <FavoriteIcon onClick={handleToggleFavorite} />
+                                }}
+                                onClick={handleToggleFavorite}>
+                                <FavoriteIcon />
                             </IconButton>
 
                             <Typography paragraph>{detail.overview}</Typography>
