@@ -1,5 +1,7 @@
 import AppLayout from '@/components/Layouts/AppLayout'
+import MediaCard from '@/components/MediaCard'
 import laravelAxios from '@/lib/laravelAxios'
+import { Container, Grid } from '@mui/material'
 import Head from 'next/head'
 import useSWR from 'swr'
 
@@ -19,6 +21,18 @@ const favorites = () => {
             <Head>
                 <title>Laravel - Favorite</title>
             </Head>
+
+            <Container>
+                <Grid container spacing={3} py={3}>
+                    {favoriteItems?.map(item => (
+                        <MediaCard
+                            key={item.id}
+                            item={item}
+                            isContent={false}
+                        />
+                    ))}
+                </Grid>
+            </Container>
         </AppLayout>
     )
 }
