@@ -9,6 +9,7 @@ import {
     Container,
     Fab,
     Grid,
+    IconButton,
     Modal,
     Rating,
     TextareaAutosize,
@@ -17,6 +18,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import StarIcon from '@mui/icons-material/Star'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 import axios from 'axios'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
@@ -138,6 +140,18 @@ const Detail = ({ detail, media_type, media_id }) => {
         }
     }
 
+    const handleToggleFavorite = async () => {
+        try {
+            const response = await laravelAxios.post(`api/favorites`, {
+                media_type,
+                media_id,
+            })
+            console.log(response.data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     useEffect(() => {
         const fetchReviews = async () => {
             try {
@@ -199,6 +213,15 @@ const Detail = ({ detail, media_type, media_id }) => {
                             <Typography variant="h4" paragraph>
                                 {detail.title || detail.name}
                             </Typography>
+
+                            <IconButton
+                                style={{
+                                    color: 'white',
+                                    background: '#0d253f',
+                                }}>
+                                <FavoriteIcon onClick={handleToggleFavorite} />
+                            </IconButton>
+
                             <Typography paragraph>{detail.overview}</Typography>
 
                             <Box
