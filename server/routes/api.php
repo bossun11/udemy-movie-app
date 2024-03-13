@@ -31,5 +31,6 @@ Route::post('/comments', [CommentController::class, 'store']);
 Route::put('/comments/{comment}', [CommentController::class, 'update']);
 Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 
+Route::get('/favorites', [FavoriteController::class, 'index']);
 Route::get('/favorites/status', [FavoriteController::class, 'checkFavoriteStatus']);
 Route::post('/favorites', [FavoriteController::class, 'toggleFavorite']);
