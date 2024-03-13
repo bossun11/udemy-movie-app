@@ -8,6 +8,21 @@ use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
+    public function checkFavoriteStatus(Request $request)
+    {
+        $request->validate([
+            'media_type' => 'required',
+            'media_id' => 'required',
+        ]);
+
+        $favorite = Favorite::where('user_id', Auth::id())
+            ->where('media_type', $request->media_type)
+            ->where('media_id', $request->media_id)
+            ->exists();
+
+        return response()->json($favorite);
+    }
+
     public function toggleFavorite(Request $request)
     {
         $request->validate([

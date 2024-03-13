@@ -156,18 +156,27 @@ const Detail = ({ detail, media_type, media_id }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await laravelAxios.get(
-                    `api/reviews/${media_type}/${media_id}`,
-                )
-                const fetchReviews = response.data
+                const [reviewResponse, favoriteResponse] = await Promise.all([
+                    laravelAxios.get(`api/reviews/${media_type}/${media_id}`),
+                    laravelAxios.get('api/favorites/status', {
+                        params: {
+                            media_type,
+                            media_id,
+                        },
+                    }),
+                ])
+                const fetchReviews = reviewResponse.data
                 setReviews(fetchReviews)
                 updateAverageRating(fetchReviews)
+
+                setIsFavorite(favoriteResponse.data)
             } catch (error) {
                 console.error(error)
             }
         }
         fetchReviews()
     }, [media_type, media_id])
+
     return (
         <AppLayout
             header={
